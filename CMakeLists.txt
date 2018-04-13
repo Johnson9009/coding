@@ -21,7 +21,7 @@
 # Style Guide, in order to checking source files automatically, a custom target is created to call
 # the lint tool "cpplint.py".
 
-cmake_minimum_required(VERSION 3.9.3)
+cmake_minimum_required(VERSION 3.9)
 project(coding CXX)
 
 # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make it prominent in the

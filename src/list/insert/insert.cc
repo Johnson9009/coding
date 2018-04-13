@@ -16,6 +16,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <iostream>
+#include "gtest/gtest.h"
 
 struct LinkNode {
   LinkNode(int var, LinkNode *next_node): value(var), next(next_node) {}
@@ -58,13 +59,17 @@ void printList(const LinkNode *head) {
   std::cout << std::endl;
 }
 
-int main(int argc, char ** argv) {
+TEST(InsertList, SequenceFromHead) {
   LinkNode *head = nullptr;
   for (int i = 0; i < 10; ++i) {
     insert(&head, i, i);
   }
 
-  std::cout << "After insert: ";
-  printList(head);
-  return 0;
+  LinkNode *node = head;
+  for (int i = 0; i < 10; ++i) {
+    EXPECT_EQ(i, node->value);
+    node = node->next;
+  }
+
+  EXPECT_EQ(nullptr, node);
 }

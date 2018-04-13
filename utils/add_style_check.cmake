@@ -28,9 +28,18 @@ endif()
 #   [EXCLUDE_DIRS <exclude_dir> [<exclude_dir> ...]]
 #   [EXCLUDE_FILES <exclude_file> [<exclude_file> ...]]
 # )
-# This function can get all header files used by source files of target automatically, default
-# files that need to be check is comprised of all source files and header files of this target,
-# system header files will be exclude directly.
+# This function can get all header files used by source files of target automatically, default files
+# that need to be check is comprised of all source files and header files of this target, system
+# header files will be exclude directly.
+#
+# The path of exclude directories and files must be relative path based on the root directory of
+# current CMake project. The usage of this function can be something like below.
+#
+# add_style_check(list_insert
+#   EXCLUDE_DIRS  gtest src/sort
+#   EXCLUDE_FILES src/list/list.h
+#                 src/list/delete/delete.cc
+# )
 function(add_style_check target_name)
   assert_cpplint_available()
   # Parse arguments to corresponding varialbes.
@@ -140,7 +149,7 @@ function(add_style_check target_name)
   endforeach()
                 # message("files is ${files}") # Debug use.
   add_custom_command(TARGET ${target_name} PRE_LINK
-    COMMAND "${PYTHON_EXECUTABLE}" "${CPPLINT_PY}" --linelength=100 --root=include ${files}
+    COMMAND "${PYTHON_EXECUTABLE}" "${CPPLINT_PY}" --linelength=100 --root=include --quiet ${files}
     COMMENT "Linting ${target_name}"
     VERBATIM)
 endfunction()
@@ -201,8 +210,8 @@ function(get_dependent_header_files header_files)
     else()
       set(c_compile_flags "${CMAKE_C_FLAGS}")
       set(cxx_compile_flags "${CMAKE_CXX_FLAGS}")
-      message(WARNING "You are using custom build type ${CMAKE_BUILD_TYPE}, compile definitions in\
-   CMAKE_C_FLAGS and CMAKE_CXX_FLAGS will be used!")
+      message(WARNING "You are using custom build type ${CMAKE_BUILD_TYPE}, compile definitions in "
+        "CMAKE_C_FLAGS and CMAKE_CXX_FLAGS will be used!")
     endif()
   endif()
 
@@ -254,10 +263,10 @@ function(get_header_files_by_compiler header_files compiler compiler_id)
   set(list_header_files_flag "-MM")
   if ("${compiler_id}" STREQUAL "MSVC")
     if ("$ENV{INCLUDE}" STREQUAL "")
-      message(FATAL_ERROR "To use the function \"add_style_check\" with Visual C++, cmake must be\
-        run from a shell that can use the compiler cl from the command line, and the \"INCLUDE\"\
-        environment variable must be set correctly. To fix this problem, run cmake from the Visual \
-        Studio Command Prompt (vcvarsall.bat).")
+      message(FATAL_ERROR "To use the function \"add_style_check\" with Visual C++, cmake must be "
+        "run from a shell that can use the compiler cl from the command line, and the \"INCLUDE\" "
+        "environment variable must be set correctly. To fix this problem, run cmake from the "
+        "Visual Studio Command Prompt (vcvarsall.bat).")
     else()
       set(definition_flag "/D")
       set(include_dir_flag "/I")
@@ -266,7 +275,8 @@ function(get_header_files_by_compiler header_files compiler compiler_id)
   elseif (NOT (("${compiler_id}" STREQUAL "Clang") OR
                ("${compiler_id}" STREQUAL "AppleClang") OR
                ("${compiler_id}" STREQUAL "GNU")))
-    message(FATAL_ERROR "Can't support your compiler ${compiler_id} now, only MSVC, Clang, AppleClang, GNU compiler can be used!")
+    message(FATAL_ERROR "Can't support your compiler ${compiler_id} now, only MSVC, Clang, "
+      "AppleClang, GNU compiler can be used!")
   endif()
 
   # Add compiler flags for each of compile definitions and include directories.
@@ -284,9 +294,17 @@ function(get_header_files_by_compiler header_files compiler compiler_id)
     ERROR_VARIABLE  stderr
   )
 
+  # If any error happened during compiler getting the header files, print out the error message.
+  if (stderr)
+    message(FATAL_ERROR "Errors happened when the style checker try to get header files of the "
+      "current target through compiler!\n"
+      "Command line: ${compiler} ${compile_defines_line} ${include_dirs_line} "
+      "${list_header_files_flag} ${arg_SRC_FILES}\n"
+      "Standard Error: ${stderr}")
+  endif()
+                # message("stdout is ${stdout}")  # Debug use.
   # Filter the stdout and get the dependent header files only inside the specific include
   # directories , then put the result to the caller.
-                # message("stdout is ${stdout}")  # Debug use.
   foreach (include_dir ${arg_INCLUDE_DIRS})
     string(REGEX MATCHALL "${include_dir}[\\/][^\\\n]*" filter_result ${stdout})
     set(filter_results ${filter_results} ${filter_result})
