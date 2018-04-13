@@ -50,19 +50,15 @@ void insert(LinkNode **head, int pos, int value) {
 }
 
 void delete_node(LinkNode **head, int pos) {
-  if (head == nullptr) {
+  if ((head == nullptr) || (*head == nullptr)) {
     std::cout << "error head!" << std::endl;
     return;
   }
 
   if (pos <= 0) {
-    if (*head == nullptr) {
-      std::cout << "head is null!" << std::endl;
-    } else {
-      LinkNode *temp = *head;
-      *head = (*head)->next;
-      delete temp;
-    }
+    LinkNode *temp = *head;
+    *head = (*head)->next;
+    delete temp;
     return;
   }
 

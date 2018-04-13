@@ -20,5 +20,4 @@
 # give a description of the relationship between targets and source files that inside current
 # directory.
 
-include(${CMAKE_CURRENT_LIST_DIR}/list/source.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/sort/source.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/quick/source.cmake)
