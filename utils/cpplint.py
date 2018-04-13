@@ -52,11 +52,14 @@ import string
 import sys
 import unicodedata
 import sysconfig
+from six import iteritems, itervalues
 
 try:
   xrange          # Python 2
+  unicode
 except NameError:
   xrange = range  # Python 3
+  unicode = str
 
 
 _USAGE = """
@@ -952,7 +955,7 @@ class _CppLintState(object):
 
   def PrintErrorCounts(self):
     """Print a summary of errors by category, and the total."""
-    for category, count in self.errors_by_category.iteritems():
+    for category, count in iteritems(self.errors_by_category):
       sys.stderr.write('Category \'%s\' errors found: %d\n' %
                        (category, count))
     sys.stdout.write('Total errors found: %d\n' % self.error_count)
@@ -4622,7 +4625,7 @@ def _GetTextInside(text, start_pattern):
 
   # Give opening punctuations to get the matching close-punctuations.
   matching_punctuation = {'(': ')', '{': '}', '[': ']'}
-  closing_punctuation = set(matching_punctuation.itervalues())
+  closing_punctuation = set(itervalues(matching_punctuation))
 
   # Find the position to start extracting text.
   match = re.search(start_pattern, text, re.M)
