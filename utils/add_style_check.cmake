@@ -199,7 +199,7 @@ function(get_dependent_header_files header_files)
       set(c_compile_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
       set(cxx_compile_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
     elseif ("${build_type}" STREQUAL "release")
-      set(c_compile_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+      set(c_compile_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}") 
       set(cxx_compile_flags "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
     elseif ("${build_type}" STREQUAL "relwithdebinfo")
       set(c_compile_flags "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
@@ -260,6 +260,7 @@ function(get_header_files_by_compiler header_files compiler compiler_id)
   # Select correct compiler flags, and assume the compiler is GNU by default.
   set(definition_flag "-D")
   set(include_dir_flag "-I")
+  set(prevent_link_flag "-c")
   set(list_header_files_flag "-MM")
   if ("${compiler_id}" STREQUAL "MSVC")
     if ("$ENV{INCLUDE}" STREQUAL "")
@@ -270,6 +271,7 @@ function(get_header_files_by_compiler header_files compiler compiler_id)
     else()
       set(definition_flag "/D")
       set(include_dir_flag "/I")
+      set(prevent_link_flag "/c")
       set(list_header_files_flag "/showIncludes")
     endif()
   elseif (NOT (("${compiler_id}" STREQUAL "Clang") OR
@@ -287,20 +289,28 @@ function(get_header_files_by_compiler header_files compiler compiler_id)
     set(include_dirs_line ${include_dirs_line} ${include_dir_flag} ${include_dir})
   endforeach()
 
+  set(command_line ${compiler} ${compile_defines_line} ${include_dirs_line}
+                               ${prevent_link_flag} ${list_header_files_flag} ${arg_SRC_FILES})
   execute_process(
-    COMMAND ${compiler} ${compile_defines_line} ${include_dirs_line}
-                        ${list_header_files_flag} ${arg_SRC_FILES}
+    COMMAND         ${command_line}
+    RESULT_VARIABLE return_code
     OUTPUT_VARIABLE stdout
     ERROR_VARIABLE  stderr
   )
-
+                # message("return code is ${return_code}")  # Debug use.
   # If any error happened during compiler getting the header files, print out the error message.
-  if (stderr)
-    message(FATAL_ERROR "Errors happened when the style checker try to get header files of the "
-      "current target through compiler!\n"
-      "Command line: ${compiler} ${compile_defines_line} ${include_dirs_line} "
-      "${list_header_files_flag} ${arg_SRC_FILES}\n"
-      "Standard Error: ${stderr}")
+  if (return_code)
+    string(CONCAT error_message
+      "Errors happened when the style checker try to get header files of the current target\n"
+      "through compiler!\n\n"
+      "Command line:\n${command_line}\n\n"
+      "Return code: ${return_code}\n\n"
+      "Standard Error:\n${stderr}"
+    )
+    # The newlines of messages displayed using FATAL_ERROR mode will be doubled, so if the message
+    # is simple just print it using FATAL_ERROR, otherwise print it at first.
+    message("\n${error_message}\n")
+    message(FATAL_ERROR)
   endif()
                 # message("stdout is ${stdout}")  # Debug use.
   # Filter the stdout and get the dependent header files only inside the specific include
