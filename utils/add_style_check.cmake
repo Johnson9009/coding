@@ -149,7 +149,7 @@ function(add_style_check target_name)
   endforeach()
                 # message("files is ${files}") # Debug use.
   add_custom_command(TARGET ${target_name} PRE_LINK
-    COMMAND "${PYTHON_EXECUTABLE}" "${CPPLINT_PY}" --linelength=100 --root=include --quiet ${files}
+    COMMAND "${PYTHON_EXECUTABLE}" "${CPPLINT_PY}" --quiet ${files}
     COMMENT "Linting ${target_name}"
     VERBATIM)
 endfunction()
