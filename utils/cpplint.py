@@ -52,20 +52,28 @@ import string
 import sys
 import unicodedata
 import sysconfig
-from six import iteritems, itervalues
 
 try:
   xrange          # Python 2
-  unicode
+except NameError:
+  xrange = range  # Python 3
+  unicode = str
+  def iteritems(d):
+    return d.items()
+  def itervalues(d):
+    return d.values()
+else:
+  # Python 2
+  def iteritems(d):
+    return d.iteritems()
+  def itervalues(d):
+    return d.itervalues()
   # Change stderr to write with replacement characters so we don't die
   # if we try to print something containing non-ASCII characters.
   sys.stderr = codecs.StreamReaderWriter(sys.stderr,
                                          codecs.getreader('utf8'),
                                          codecs.getwriter('utf8'),
                                          'replace')
-except NameError:
-  xrange = range  # Python 3
-  unicode = str
 
 
 _USAGE = """
