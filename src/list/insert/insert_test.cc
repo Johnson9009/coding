@@ -15,61 +15,37 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include <iostream>
+#include "list/insert/insert-inl.h"
+
 #include "gtest/gtest.h"
 
-struct LinkNode {
-  LinkNode(int var, LinkNode *next_node): value(var), next(next_node) {}
-  int value;
-  LinkNode * next;
+class InsertList : public testing::Test {
+ protected:
+  static void SetUpTestCase() {
+    head_ = nullptr;
+  }
+  static void TearDownTestCase() {
+    LinkNode *node = head_;
+    while (node != nullptr) {
+      LinkNode *temp = node;
+      node = node->next;
+      delete temp;
+    }
+    head_ = nullptr;
+  }
+  static LinkNode *head_;
 };
 
+LinkNode *InsertList::head_ = nullptr;
 
-void insert(LinkNode **head, int pos, int value) {
-  if (head == nullptr) {
-    std::cout << "error head!" << std::endl;
-    return;
-  }
-
-  if (pos <= 0) {
-    *head = new LinkNode(value, *head);
-    return;
-  }
-
-  LinkNode *previous = *head;
-  for (int i = 0; i < (pos - 1); ++i) {
-    if ((previous == nullptr) || (previous->next == nullptr)) {
-      std::cout << "error head or pos!" << std::endl;
-      return;
-    } else {
-      previous = previous->next;
-    }
-  }
-
-  previous->next = new LinkNode(value, previous->next);
-  return;
-}
-
-void printList(const LinkNode *head) {
-  const LinkNode *iter = head;
-  while (iter != nullptr) {
-    std::cout << iter->value << ", ";
-    iter = iter->next;
-  }
-  std::cout << std::endl;
-}
-
-TEST(InsertList, SequenceFromHead) {
-  LinkNode *head = nullptr;
+TEST_F(InsertList, SequenceFromHead) {
   for (int i = 0; i < 10; ++i) {
-    insert(&head, i, i);
+    insert(&head_, i, i);
   }
 
-  LinkNode *node = head;
+  LinkNode *node = head_;
   for (int i = 0; i < 10; ++i) {
     EXPECT_EQ(i, node->value);
     node = node->next;
   }
-
-  EXPECT_EQ(nullptr, node);
 }

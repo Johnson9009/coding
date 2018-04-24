@@ -22,5 +22,7 @@
 # and any other commands must be placed below all "include" commands. This file only need to give a
 # description of the relationship between targets and source files that inside current directory.
 
+include_directories(${CMAKE_CURRENT_LIST_DIR})
+
 include(${CMAKE_CURRENT_LIST_DIR}/list/source.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/sort/source.cmake)
