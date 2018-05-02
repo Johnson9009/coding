@@ -18,7 +18,7 @@
 #ifndef LIST_INSERT_INSERT_INL_H_
 #define LIST_INSERT_INSERT_INL_H_
 
-#include <iostream>
+#include <stdexcept>
 
 struct LinkNode {
   LinkNode(int var, LinkNode *next_node): value(var), next(next_node) {}
@@ -28,20 +28,24 @@ struct LinkNode {
 
 void insert(LinkNode **head, int pos, int value) {
   if (head == nullptr) {
-    std::cout << "error head!" << std::endl;
-    return;
+    throw std::invalid_argument("head");
   }
 
-  if (pos <= 0) {
+  if ((*head == nullptr) && (pos != 0)) {
+    throw std::invalid_argument("empty:pos");
+  } else if ((*head != nullptr) && (pos < 0)) {
+    throw std::invalid_argument("nonempty:pos");
+  }
+
+  if (pos == 0) {
     *head = new LinkNode(value, *head);
     return;
   }
 
   LinkNode *previous = *head;
   for (int i = 0; i < (pos - 1); ++i) {
-    if ((previous == nullptr) || (previous->next == nullptr)) {
-      std::cout << "error head or pos!" << std::endl;
-      return;
+    if (previous->next == nullptr) {
+      throw std::invalid_argument("nonempty:pos");
     } else {
       previous = previous->next;
     }
