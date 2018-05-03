@@ -23,7 +23,7 @@
 # description of the relationship between targets and source files that inside current directory.
 
 set(DELETE_LIST_SRCS ${DELETE_LIST_SRCS}
-    ${CMAKE_CURRENT_LIST_DIR}/delete.cc
+    ${CMAKE_CURRENT_LIST_DIR}/delete_test.cc
 )
 
 # Because source file list of each target, such as "UNIT_TEST_SOURCES", is defined in above CMake

@@ -15,7 +15,10 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include <iostream>
+#ifndef LIST_DELETE_DELETE_INL_H_
+#define LIST_DELETE_DELETE_INL_H_
+
+#include <stdexcept>
 
 struct LinkNode {
   LinkNode(int var, LinkNode *next_node): value(var), next(next_node) {}
@@ -23,39 +26,16 @@ struct LinkNode {
   LinkNode * next;
 };
 
-
-void insert(LinkNode **head, int pos, int value) {
-  if (head == nullptr) {
-    std::cout << "error head!" << std::endl;
-    return;
-  }
-
-  if (pos <= 0) {
-    *head = new LinkNode(value, *head);
-    return;
-  }
-
-  LinkNode *previous = *head;
-  for (int i = 0; i < (pos - 1); ++i) {
-    if ((previous == nullptr) || (previous->next == nullptr)) {
-      std::cout << "error head or pos!" << std::endl;
-      return;
-    } else {
-      previous = previous->next;
-    }
-  }
-
-  previous->next = new LinkNode(value, previous->next);
-  return;
-}
-
 void delete_node(LinkNode **head, int pos) {
   if ((head == nullptr) || (*head == nullptr)) {
-    std::cout << "error head!" << std::endl;
-    return;
+    throw std::invalid_argument("head");
   }
 
-  if (pos <= 0) {
+  if (pos < 0) {
+    throw std::invalid_argument("nonempty:pos");
+  }
+
+  if (pos == 0) {
     LinkNode *temp = *head;
     *head = (*head)->next;
     delete temp;
@@ -64,17 +44,15 @@ void delete_node(LinkNode **head, int pos) {
 
   LinkNode *previous = *head;
   for (int i = 0; i < (pos - 1); ++i) {
-    if ((previous == nullptr) || (previous->next == nullptr)) {
-      std::cout << "error head or pos!" << std::endl;
-      return;
+    if (previous->next == nullptr) {
+      throw std::invalid_argument("nonempty:pos");
     } else {
       previous = previous->next;
     }
   }
 
   if (previous->next == nullptr) {
-    std::cout << "error pos!" << std::endl;
-    return;
+    throw std::invalid_argument("nonempty:pos");
   }
 
   LinkNode *temp = previous->next;
@@ -83,25 +61,4 @@ void delete_node(LinkNode **head, int pos) {
   return;
 }
 
-void printList(const LinkNode *head) {
-  const LinkNode *iter = head;
-  while (iter != nullptr) {
-    std::cout << iter->value << ", ";
-    iter = iter->next;
-  }
-  std::cout << std::endl;
-}
-
-int main(int argc, char ** argv) {
-  LinkNode *head = nullptr;
-  for (int i = 0; i < 10; ++i) {
-    insert(&head, i, i);
-  }
-
-  std::cout << "Before delete: ";
-  printList(head);
-  delete_node(&head, 5);
-  std::cout << "After  delete: ";
-  printList(head);
-  return 0;
-}
+#endif  // LIST_DELETE_DELETE_INL_H_
