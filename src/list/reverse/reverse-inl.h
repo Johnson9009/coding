@@ -15,39 +15,14 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include <iostream>
+#ifndef LIST_REVERSE_REVERSE_INL_H_
+#define LIST_REVERSE_REVERSE_INL_H_
 
 struct LinkNode {
   LinkNode(int var, LinkNode *next_node): value(var), next(next_node) {}
   int value;
   LinkNode * next;
 };
-
-
-void insert(LinkNode **head, int pos, int value) {
-  if (head == nullptr) {
-    std::cout << "error head!" << std::endl;
-    return;
-  }
-
-  if (pos <= 0) {
-    *head = new LinkNode(value, *head);
-    return;
-  }
-
-  LinkNode *previous = *head;
-  for (int i = 0; i < (pos - 1); ++i) {
-    if ((previous == nullptr) || (previous->next == nullptr)) {
-      std::cout << "error head or pos!" << std::endl;
-      return;
-    } else {
-      previous = previous->next;
-    }
-  }
-
-  previous->next = new LinkNode(value, previous->next);
-  return;
-}
 
 void reverse(LinkNode **head) {
   if ((head == nullptr) || (*head == nullptr) || ((*head)->next == nullptr)) {
@@ -68,25 +43,4 @@ void reverse(LinkNode **head) {
   return;
 }
 
-void printList(const LinkNode *head) {
-  const LinkNode *iter = head;
-  while (iter != nullptr) {
-    std::cout << iter->value << ", ";
-    iter = iter->next;
-  }
-  std::cout << std::endl;
-}
-
-int main(int argc, char ** argv) {
-  LinkNode *head = nullptr;
-  for (int i = 0; i < 10; ++i) {
-    insert(&head, i, i);
-  }
-
-  std::cout << "Before reverse: ";
-  printList(head);
-  reverse(&head);
-  std::cout << "After  reverse: ";
-  printList(head);
-  return 0;
-}
+#endif  // LIST_REVERSE_REVERSE_INL_H_
