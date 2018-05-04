@@ -15,8 +15,11 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#include <iostream>
-#include <algorithm>
+#ifndef SORT_QUICK_QUICK_INL_H_
+#define SORT_QUICK_QUICK_INL_H_
+
+#include <stdexcept>
+#include <utility>
 
 int partition(int *data, int first_idx, int last_idx) {
   int pivot_value = data[last_idx];
@@ -63,26 +66,29 @@ int partition2(int *data, int first_idx, int last_idx) {
 }
 
 void quick_sort(int *data, int first_idx, int last_idx) {
-  // Must be >=, can not be ==.
-  if ((data == nullptr) || (first_idx >= last_idx)) {
+  // 1. Exception handling.
+  if (data == nullptr) {
+    throw std::invalid_argument("data");
+  }
+
+  // 2. Recursion quit conditions.
+  // Must be <=, if pivot_idx equals to first_idx or last_idx, then the last_idx of next recursion
+  // will less then the first_idx of next recursion.
+  if (last_idx <= first_idx) {
     return;
   }
 
+  // 3. Pivot selection and swap with the last item.
   int pivot_idx = first_idx + ((last_idx - first_idx) >> 1);
   std::swap(data[pivot_idx], data[last_idx]);
 
+  // 4. Partition.
   pivot_idx = partition2(data, first_idx, last_idx);
+
+  // 5. Recursive callings of left sub part and right sub part.
   quick_sort(data, first_idx, pivot_idx - 1);
   quick_sort(data, pivot_idx + 1, last_idx);
   return;
 }
 
-int main(int argc, char **argv) {
-  int data[] = {9, 2, 8, 6, 7, 3, 2, 4, 1, 10};
-  quick_sort(data, 0, 9);
-  for (std::size_t i = 0; i < (sizeof(data) / sizeof(data[0])); ++i) {
-    std::cout << data[i] << ", ";
-  }
-  std::cout << std::endl;
-  return 0;
-}
+#endif  // SORT_QUICK_QUICK_INL_H_

@@ -23,7 +23,7 @@
 # description of the relationship between targets and source files that inside current directory.
 
 set(QUICK_SORT_SRCS ${QUICK_SORT_SRCS}
-    ${CMAKE_CURRENT_LIST_DIR}/quick.cc
+    ${CMAKE_CURRENT_LIST_DIR}/quick_test.cc
 )
 
 # Because source file list of each target, such as "UNIT_TEST_SOURCES", is defined in above CMake
