@@ -16,46 +16,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "list/reverse/reverse-inl.h"
-
-#include "gtest/gtest.h"
-
-class ListTest : public testing::Test {
- public:
-  explicit ListTest(int length) : head_(nullptr), original_length_(length) {}
-  static void CreateList(LinkNode **head, int length) {
-    LinkNode **node = head;
-    for (int i = 0; i < length; ++i) {
-      *node = new LinkNode(i, nullptr);
-      node = &((*node)->next);
-    }
-    return;
-  }
-  static void DestroyList(LinkNode **head) {
-    LinkNode *node = *head;
-    while (node != nullptr) {
-      LinkNode *temp = node;
-      node = node->next;
-      delete temp;
-    }
-    *head = nullptr;
-    return;
-  }
-
- protected:
-  virtual void SetUp() {
-    ASSERT_EQ(nullptr, head_);
-    CreateList(&head_, original_length_);
-  }
-  virtual void TearDown() {
-    DestroyList(&head_);
-    return;
-  }
-  // If all tests are run serially, this variable can be static, because "SetUp" and "TearDown" can
-  // ensure its consistency. But if all tests may be run in parallel, then this variable must not be
-  // static.
-  LinkNode *head_;
-  int original_length_;
-};
+#include "list/common.h"
 
 TEST(CrashTest, HeadNodeNotExist) {
   reverse(nullptr);
@@ -67,11 +28,6 @@ TEST(CrashTest, EmptyList) {
   ASSERT_EQ(nullptr, head);
 }
 
-class OneNodeListTest : public ListTest {
- public:
-  OneNodeListTest() : ListTest(1) {}
-};
-
 TEST_F(OneNodeListTest, All) {
   ASSERT_NE(nullptr, head_);
   reverse(&head_);
@@ -81,11 +37,6 @@ TEST_F(OneNodeListTest, All) {
 }
 
 int const kMultiNodeCnt = 10;
-
-class MultiNodeListTest : public ListTest {
- public:
-  MultiNodeListTest() : ListTest(kMultiNodeCnt) {}
-};
 
 TEST_F(MultiNodeListTest, All) {
   ASSERT_NE(nullptr, head_);
