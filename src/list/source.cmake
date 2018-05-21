@@ -12,3 +12,4 @@
 include(${CMAKE_CURRENT_LIST_DIR}/insert/source.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/delete/source.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/reverse/source.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/reverse_print/source.cmake)
