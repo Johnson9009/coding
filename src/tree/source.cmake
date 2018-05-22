@@ -10,3 +10,4 @@
 # description of the relationship between targets and source files that inside current directory.
 
 include(${CMAKE_CURRENT_LIST_DIR}/reconstruct_from_traversal/source.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/next_node/source.cmake)
