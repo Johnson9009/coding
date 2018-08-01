@@ -16,17 +16,19 @@ void reverse(LinkNode **head) {
     return;
   }
 
-  LinkNode *previous = *head;
-  LinkNode *behind = (*head)->next->next;
+  LinkNode* cur_head = *head;
+  LinkNode* ahead = *head;
+  LinkNode* behind = (*head)->next->next;
 
-  while (previous->next != nullptr) {
-    previous->next->next = *head;
-    *head = previous->next;
-    previous->next = behind;
+  while (ahead->next != nullptr) {
+    ahead->next->next = cur_head;
+    cur_head = ahead->next;
+    ahead->next = behind;
     if (behind != nullptr) {
       behind = behind->next;
     }
   }
+  *head = cur_head;
   return;
 }
 
