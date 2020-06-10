@@ -1,10 +1,20 @@
 
-fn main() -> std::io::Result<()> {
-  for entry in std::fs::read_dir("/Users/johnson/.emacs.d/elpa/25.3/develop")? {
-    let entry = entry?;
-    if entry.file_type()?.is_dir() == true {
-      println!("dir: {:?}", entry.file_name());
+fn main() {
+  let pkg_path = std::env::args()
+                 .nth(1)
+                 .expect("The path of emacs package directory must be given.");
+
+  let excludes = vec![String::from("archives")];
+  let mut packages = Vec::new();
+  for entry in std::fs::read_dir(pkg_path).unwrap() {
+    let entry = entry.unwrap();
+    if entry.file_type().unwrap().is_dir() == true {
+      let dir_name = entry.file_name().into_string().unwrap();
+      if excludes.contains(&dir_name) {
+        continue;
+      }
+      packages.push(dir_name.rsplitn(2, '-').last().unwrap().to_owned());
     }
   }
-  Ok(())
+  println!("packages: {:#?}", packages);
 }
