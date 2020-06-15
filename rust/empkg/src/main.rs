@@ -25,7 +25,10 @@ fn main() {
                  .expect("The path of emacs package describe file must be set.");
   let yaml_string = fs::read_to_string(pkg_file).unwrap();
   let docs = YamlLoader::load_from_str(&yaml_string).unwrap();
-  let doc = &docs[0];
-
-  println!("{:?}", doc);
+  let known_packages = docs[0].as_vec().unwrap()
+                       .iter()
+                       .map(|x| x.as_str().unwrap().to_owned())
+                       .collect::<Vec<String>>();
+  println!("unknown packages: {:?}", packages.iter().filter(|x| known_packages.contains(x) == false).collect::<Vec<_>>());
+  println!("Removed known packages: {:?}", known_packages.iter().filter(|x| packages.contains(x) == false).collect::<Vec<_>>());
 }
