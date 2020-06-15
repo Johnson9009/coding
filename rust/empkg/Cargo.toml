@@ -1,7 +1,7 @@
 [package]
 name = "empkg"
 version = "0.1.0"
-authors = ["Qiang Zhang <qiangz@synopsys.com>"]
+authors = ["Johnson Zhang <johnson9009@163.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
